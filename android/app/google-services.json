@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "607355814423",
+    "firebase_url": "https://gestiogasto.firebaseio.com",
+    "project_id": "gestiogasto",
+    "storage_bucket": "gestiogasto.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:607355814423:android:3b5469bb582e44eb295252",
+        "android_client_info": {
+          "package_name": "com.example.gastos"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "607355814423-nbs2h5n47ogpu1u1jdt04ts0kbsgcvj7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAvBPQDDZMzjvp7jalz6Y7xUKzgiCysRzU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "607355814423-nbs2h5n47ogpu1u1jdt04ts0kbsgcvj7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
