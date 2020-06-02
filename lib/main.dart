@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 //iconos 
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+//import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:eva_icons_flutter/eva_icons_flutter.dart';
+//pages
 import 'package:gastos/month_widget.dart';
 
 
@@ -70,7 +72,7 @@ class _HomePageState extends State<HomePage> {
         bottomNavigationBar: _botonera(),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         floatingActionButton: FloatingActionButton(
-          child: Icon(Icons.add),  
+          child: Icon(EvaIcons.plusOutline),  
           onPressed: () {},
         ),
       );
@@ -176,11 +178,11 @@ class _HomePageState extends State<HomePage> {
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
-              _bottomAction(FontAwesomeIcons.history),
-              _bottomAction(FontAwesomeIcons.chartPie),
+              _bottomAction(EvaIcons.trendingUpOutline),
+              _bottomAction(EvaIcons.pieChartOutline),
               SizedBox(width: 48.0),
-              _bottomAction(FontAwesomeIcons.wallet),
-              _bottomAction(Icons.settings),
+              _bottomAction(EvaIcons.shoppingBagOutline),
+              _bottomAction(EvaIcons.settings2Outline),
             ],
           ),
         );
@@ -190,7 +192,7 @@ class _HomePageState extends State<HomePage> {
       return InkWell(
         child: Padding(
           padding: const EdgeInsets.all(10.0),
-          child: Icon(icon),
+          child: Icon(icon,size: 25.0,),
         ),
         onTap: (){},
       );
