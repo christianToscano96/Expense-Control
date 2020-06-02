@@ -2,17 +2,37 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 //pages
-import 'package:gastos/grafico.dart';
+import 'package:gastos/graph.dart';
 
 class MonthWidget extends StatefulWidget {
 
   final List<DocumentSnapshot> documents;
   final double total;
+  final List<double> perDay;
+  final Map<String, double> categories;
 
   MonthWidget({Key key, this.documents}) : 
+        //get total
         total = documents.map((doc) => doc['value'])
           .fold(0.0, (a, b) => a + b),
+        //get the days
+        perDay = List.generate(30, (int index) {
+          return documents.where((doc) => doc['day'] == (index + 1))
+            .map((doc) => doc['value'])
+            .fold(0.0, (a, b) => a + b);
+        }),
+        //get categories and total
+        categories = documents.fold({}, (Map<String, double> map, document) {
+          if(!map.containsKey(document['category'])){
+            map[document['category']] = 0.0;
+          }
+
+          map[document['category']] += document['value'];
+          return map;
+        }),
         super(key: key);
+
+
 
   @override
   _MonthWidgetState createState() => _MonthWidgetState();
@@ -21,13 +41,15 @@ class MonthWidget extends StatefulWidget {
 class _MonthWidgetState extends State<MonthWidget> {
   @override
   Widget build(BuildContext context) {
+    print(widget.categories);
     return Expanded(
       child: Column(
        children: <Widget>[
+         
           _expensas(),
-          _graficos(),
+          _grahp(),
           SizedBox(height: 15.0,),          
-          _lista(),
+          _category(),
        ],
       ),
     );
@@ -37,7 +59,7 @@ class _MonthWidgetState extends State<MonthWidget> {
     Widget _expensas() {
       return Column(
         children: <Widget>[
-            Text("\$ 2300.55",
+            Text("\$${widget.total.toStringAsFixed(2)}",
               style: TextStyle(fontSize: 40.6,
               fontWeight: FontWeight.bold,
               ),
@@ -53,20 +75,26 @@ class _MonthWidgetState extends State<MonthWidget> {
     }
     
     //graficos
-    Widget _graficos() {
+    Widget _grahp() {
       return Container(
         padding: EdgeInsets.symmetric(horizontal: 10.0),
         height: 250.0,
-        child: GraphWidget()
+        child: GraphWidget(data: widget.perDay)
       );
     }
 
     //lista
-    Widget _lista() {
+    Widget _category() {
       return Expanded(
         child: ListView.separated(
-          itemCount: 15,
-          itemBuilder: (BuildContext context, int index ) =>_item(FontAwesomeIcons.shoppingCart, 'Mercaderia', 14, 142.50),        
+          itemCount: widget.categories.keys.length,
+          itemBuilder: (BuildContext context, int index ){ 
+            //get categories and key
+            var key  = widget.categories.keys.elementAt(index);
+            var data = widget.categories[key];
+
+            return _item(FontAwesomeIcons.shoppingCart, key, 100 * data  ~/ widget.total, data);
+          },
           separatorBuilder: (BuildContext context, int index ) {
             return Container(
               color: Colors.black12,
