@@ -16,8 +16,10 @@ class CategorySelectionWidget extends StatefulWidget {
 class CategoryWidget extends StatelessWidget {
   final String name;
   final IconData icon;
+  final bool selected;
 
-  const CategoryWidget({Key key, this.name, this.icon}) : super(key: key);
+  const CategoryWidget({Key key, this.name, this.icon, this.selected}) 
+        : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +33,8 @@ class CategoryWidget extends StatelessWidget {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(25.0),
               border: Border.all(
-                color: Colors.purple,
+                color: selected ? Colors.purple : Colors.black26,
+                width: selected ? 3.0 : 1.0,
               )
             ),
             child: Icon(icon, color: Colors.purple,),
@@ -46,7 +49,7 @@ class CategoryWidget extends StatelessWidget {
 
 class _CategorySelectionWidgetState extends State<CategorySelectionWidget> {
 
-  String currentItem = '';
+  String currentItem = 'Shopping';
 
   @override
   Widget build(BuildContext context) {
@@ -55,9 +58,17 @@ class _CategorySelectionWidgetState extends State<CategorySelectionWidget> {
 
     widget.categories.forEach((name, icon) {
       widgets.add(
-          CategoryWidget(
-            name: name,
-            icon: icon,  
+          GestureDetector(
+            onTap: (){
+              setState(() {
+                currentItem = name;
+              });
+            },
+            child: CategoryWidget(
+              name: name,
+              icon: icon,  
+              selected: name == currentItem,
+            ),
           )
         );
     });
