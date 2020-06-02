@@ -3,7 +3,7 @@ import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 
 
-import 'package:gastos/month_widget.dart';
+import 'package:gastos/widgets/month_widget.dart';
 
 
 class HomePage extends StatefulWidget {
