@@ -53,7 +53,7 @@ class _GraphWidgetState extends State<GraphWidget> {
     List<Series<double, num>> series = [
       Series<double, int>(
         id: 'Gasto',
-        colorFn: (_, __) => MaterialPalette.pink.shadeDefault,
+        colorFn: (_, __) => MaterialPalette.purple.shadeDefault,
         domainFn: (value, index) => index,
         measureFn: (value, _) => value,
         data: data,
