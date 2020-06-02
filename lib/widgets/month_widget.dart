@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+//import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:eva_icons_flutter/eva_icons_flutter.dart';
+
 //pages
 import 'package:gastos/graph.dart';
 
@@ -93,7 +95,7 @@ class _MonthWidgetState extends State<MonthWidget> {
             var key  = widget.categories.keys.elementAt(index);
             var data = widget.categories[key];
 
-            return _item(FontAwesomeIcons.shoppingCart, key, 100 * data  ~/ widget.total, data);
+            return _item(EvaIcons.shoppingCartOutline, key, 100 * data  ~/ widget.total, data);
           },
           separatorBuilder: (BuildContext context, int index ) {
             return Container(
