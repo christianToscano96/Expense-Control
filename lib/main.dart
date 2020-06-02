@@ -1,10 +1,11 @@
 
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 //iconos 
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-//pages
-import 'package:gastos/grafico.dart';
+import 'package:gastos/month_widget.dart';
+
 
 
 void main() {
@@ -19,7 +20,7 @@ class MyApp extends StatelessWidget {
       title: 'Gestion Gastos',
       theme: ThemeData(
         
-        primarySwatch: Colors.pink,
+        primarySwatch: Colors.purple,
                          
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
@@ -39,14 +40,23 @@ class _HomePageState extends State<HomePage> {
 
   //conroller para maejar el scroll view de los meses
   PageController _controller;
-  int pageInitial = 9;
+  int currentPage = 9;
+  //firebase variable
+  Stream<QuerySnapshot> _query;
 
   @override
   void initState(){
     super.initState();
 
+    //firebase 
+    _query = Firestore.instance
+              .collection('expenses')
+              .where("month", isEqualTo: currentPage + 1)
+              .snapshots();
+              
+
     _controller = PageController(
-      initialPage: pageInitial,
+      initialPage: currentPage,
       viewportFraction: 0.4,
     );
   }
@@ -73,16 +83,27 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           children: <Widget>[
             _selector(), 
-            _expensas(),
-            _graficos(),
-            SizedBox(height: 15.0,),          
-            _lista(),
+            StreamBuilder<QuerySnapshot>(
+              stream: _query,
+              builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> data){
+                if(data.hasData){
+                  return MonthWidget(
+                    documents: data.data.documents,
+                  );
+                }else{
+                  return Center(                   
+                    child: CircularProgressIndicator(),
+                  );
+                }
+                
+              }
+            ),
           ],
         ),
       );
     }
 
-    //Widgets de areas
+    //Widgets de meses
     Widget _selector(){
       return SizedBox.fromSize(
         size: Size.fromHeight(70.0),
@@ -90,7 +111,12 @@ class _HomePageState extends State<HomePage> {
           controller: _controller,
           onPageChanged: (newPage) {
             setState(() {
-              pageInitial = newPage;
+              currentPage = newPage;
+              //atar al cambio de pagina
+              _query = Firestore.instance
+                  .collection('expenses')
+                  .where("month", isEqualTo: currentPage + 1)
+                  .snapshots();
             });
           },
         children: <Widget>[
@@ -117,17 +143,17 @@ class _HomePageState extends State<HomePage> {
       final selected = TextStyle(
         fontSize: 20.0,
         fontWeight: FontWeight.bold,
-        color: Colors.pinkAccent
+        color: Colors.purple
       );
       final unselected = TextStyle(
         fontSize: 20.0,
         fontWeight: FontWeight.normal,
-        color: Colors.pinkAccent.withOpacity(0.4),
+        color: Colors.purple.withOpacity(0.4),
       );
 
-      if(position == pageInitial){
+      if(position == currentPage){
         _alignment = Alignment.center;
-      } else if(position > pageInitial) {
+      } else if(position > currentPage) {
         _alignment = Alignment.centerRight;
       }else{
         _alignment = Alignment.centerLeft;
@@ -136,85 +162,12 @@ class _HomePageState extends State<HomePage> {
       return Align(
         alignment: _alignment,
         child: Text(name,
-          style: position == pageInitial ? selected : unselected,
+          style: position == currentPage ? selected : unselected,
         )
       );
     }
 
-    
-    //total expensas
-    Widget _expensas() {
-      return Column(
-        children: <Widget>[
-            Text("\$ 2300.55",
-              style: TextStyle(fontSize: 40.6,
-              fontWeight: FontWeight.bold,
-              ),
-            ),
-
-          Text("Total expensas",
-              style: TextStyle(fontWeight: FontWeight.bold,
-              color: Colors.black38, fontSize: 16.0
-            ),
-          ),
-        ],
-      );
-    }
-    
-    //graficos
-    Widget _graficos() {
-      return Container(
-        padding: EdgeInsets.symmetric(horizontal: 10.0),
-        height: 250.0,
-        child: GraphWidget()
-      );
-    }
-
-    //lista
-    Widget _lista() {
-      return Expanded(
-        child: ListView.separated(
-          itemCount: 15,
-          itemBuilder: (BuildContext context, int index ) =>_item(FontAwesomeIcons.shoppingCart, 'Mercaderia', 14, 142.50),        
-          separatorBuilder: (BuildContext context, int index ) {
-            return Container(
-              color: Colors.black12,
-              height: 2.0,
-            );
-          } ,
-        ),
-      );
-    }
-
-    //metodo para generar el layout de la listas
-    Widget _item(IconData icon, String categoria, int porcentaje, double gasto) {
-      
-      return ListTile(
-        leading: Icon(icon, color: Colors.pinkAccent.withOpacity(0.5), size: 32.0),
-        title: Text(categoria, style: TextStyle( fontWeight: FontWeight.bold, fontSize: 20.0)),
-        subtitle: Text('$porcentaje de las expensas',style: TextStyle(color: Colors.blueGrey, fontSize: 16.0)),
-        trailing: Container(
-          decoration:  BoxDecoration(
-            color: Colors.pink.withOpacity(0.2),
-            borderRadius: BorderRadius.circular(5.0)
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text('\$$gasto',
-            style: TextStyle(
-                color: Colors.pinkAccent,
-                fontWeight: FontWeight.bold,
-                fontSize: 16.0,
-              ),
-            ),
-          ),
-        ),
-      );
-    }
-
-
-
-    //widget de botonera 
+   //widget de botonera 
     Widget _botonera() {
       return BottomAppBar(
           notchMargin: 8.0,
@@ -242,4 +195,6 @@ class _HomePageState extends State<HomePage> {
         onTap: (){},
       );
     }
+    
+    
 }
